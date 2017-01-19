@@ -1,0 +1,37 @@
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Scanner;
+import java.util.zip.CRC32;
+
+public class Main {
+
+    public static void main(String[] args) throws IOException {
+        CRC32 crc32 = new CRC32();
+        Scanner sc = new Scanner(System.in);
+        String guess = sc.nextLine();
+        crc32.update(guess.getBytes());
+        long guessHash = crc32.getValue();// хэш CRC32 пароля, который нужно угадать
+        File infile = new File("C:\\Users\\User\\Desktop\\pass.txt");
+        FileInputStream in = new FileInputStream(infile);
+        Scanner scanner = new Scanner(in);
+        ArrayList <String> words = new ArrayList<String>();
+        while(scanner.hasNext()){
+            words.add(scanner.nextLine());
+        }
+        System.out.println("There are " + words.size() + " in dictionary file");
+        for(int i = 0; i < words.size(); i++) {
+            String word1 = null;
+            crc32.reset();
+            word1 = words.get(i);
+            crc32.update(word1.getBytes());
+            long hash1 = crc32.getValue();
+            if (hash1 == guessHash){
+                System.out.println("Нашёл " + "0x" +Long.toHexString(hash1).toUpperCase());
+                break;
+            }
+        }
+    }
+}
